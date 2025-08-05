@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  just_audio: ^0.9.36
+  just_audio: ^0.10.4
   audio_service: ^0.18.9
   audio_session: ^0.1.14
 

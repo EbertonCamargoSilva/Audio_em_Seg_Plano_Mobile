@@ -63,10 +63,11 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                icon: const Icon(Icons.skip_previous),
-                iconSize: 48,
-                onPressed: () => _audioHandler.skipToPrevious(),
+              GestureDetector(
+                onTap: () => _audioHandler.skipToPrevious(),
+                onLongPress: () =>
+                    (_audioHandler as MyAudioHandler).rewind10Seconds(),
+                child: const Icon(Icons.skip_previous, size: 48),
               ),
               IconButton(
                 icon: const Icon(Icons.play_arrow),
@@ -78,10 +79,11 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
                 iconSize: 64,
                 onPressed: () => _audioHandler.pause(),
               ),
-              IconButton(
-                icon: const Icon(Icons.skip_next),
-                iconSize: 48,
-                onPressed: () => _audioHandler.skipToNext(),
+              GestureDetector(
+                onTap: () => _audioHandler.skipToNext(),
+                onLongPress: () =>
+                    (_audioHandler as MyAudioHandler).forward10Seconds(),
+                child: const Icon(Icons.skip_next, size: 48),
               ),
             ],
           ),
@@ -101,14 +103,13 @@ class MyAudioHandler extends BaseAudioHandler {
 
   MyAudioHandler() {
     _init();
-
   }
 
   Future<void> _init() async {
     // Lista de faixas com metadata
     final playlistItems = [
       MediaItem(
-        id: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
+        id: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3',
         album: "Album 1",
         title: "SoundHelix Song 1",
         artist: "SoundHelix",
@@ -119,6 +120,18 @@ class MyAudioHandler extends BaseAudioHandler {
         title: "SoundHelix Song 2",
         artist: "SoundHelix",
       ),
+      MediaItem(
+        id: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3',
+        album: "Album 2",
+        title: "SoundHelix Song 3",
+        artist: "SoundHelix",
+      ),
+      MediaItem(
+        id: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
+        album: "Album 2",
+        title: "SoundHelix Song 4",
+        artist: "SoundHelix",
+      ),
     ];
 
     // Enviar lista de músicas (obrigatório para miniplayer Android)
@@ -127,7 +140,9 @@ class MyAudioHandler extends BaseAudioHandler {
 
     // Carregar playlist no player
     final playlist = ConcatenatingAudioSource(
-      children: playlistItems.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+      children: playlistItems
+          .map((item) => AudioSource.uri(Uri.parse(item.id)))
+          .toList(),
     );
     await _player.setAudioSource(playlist);
 
@@ -150,8 +165,9 @@ class MyAudioHandler extends BaseAudioHandler {
       controls: [
         MediaControl.skipToPrevious,
         _player.playing ? MediaControl.pause : MediaControl.play,
+        MediaControl.rewind,
         MediaControl.skipToNext,
-        MediaControl.stop,
+        MediaControl.fastForward,
       ],
       systemActions: const {
         MediaAction.seek,
@@ -187,5 +203,34 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> skipToNext() => _player.seekToNext();
 
   @override
+  Future<void> fastForward() async {
+    final currentPosition = _player.position;
+    final totalDuration = _player.duration;
+
+    if (totalDuration != null) {
+      final newPosition = currentPosition + Duration(seconds: 10);
+      // Garante que não passe da duração total
+      if (newPosition < totalDuration) {
+        await _player.seek(newPosition);
+      } else {
+        await _player.seek(totalDuration);
+      }
+    }
+  }
+
+  @override
+  Future<void> rewind() async {
+    final currentPosition = _player.position;
+
+    final newPosition = currentPosition - Duration(seconds: 10);
+    // Garante que não vá abaixo de zero
+    if (newPosition > Duration.zero) {
+      await _player.seek(newPosition);
+    } else {
+      await _player.seek(Duration.zero);
+    }
+  }
+
+  @override
   Future<void> skipToPrevious() => _player.seekToPrevious();
-}
+  }
