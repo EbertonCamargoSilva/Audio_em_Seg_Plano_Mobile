@@ -231,6 +231,30 @@ class MyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  Future<void> forward10Seconds() async {
+    final currentPosition = _player.position;
+    final totalDuration = _player.duration;
+
+    if (totalDuration != null) {
+      final newPosition = currentPosition + Duration(seconds: 10);
+      if (newPosition < totalDuration) {
+        await _player.seek(newPosition);
+      } else {
+        await _player.seek(totalDuration);
+      }
+    }
+  }
+
+  Future<void> rewind10Seconds() async {
+    final currentPosition = _player.position;
+    final newPosition = currentPosition - Duration(seconds: 10);
+    if (newPosition > Duration.zero) {
+      await _player.seek(newPosition);
+    } else {
+      await _player.seek(Duration.zero);
+    }
+  }
+
   @override
   Future<void> skipToPrevious() => _player.seekToPrevious();
-  }
+}

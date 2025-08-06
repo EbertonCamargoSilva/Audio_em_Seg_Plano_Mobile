@@ -1,16 +1,30 @@
-# audio_seg_plan
+Comportamento dos Controles de Reprodução
 
-A new Flutter project.
+▶️ Aplicativo em Primeiro Plano (App aberto)
+Botões exibidos:
 
-## Getting Started
+- Play
+- Pause
+- Retroceder faixa
+- Avançar faixa
 
-This project is a starting point for a Flutter application.
+Comportamento dos botões de retroceder e avançar:
 
-A few resources to get you started if this is your first Flutter project:
+Toque curto:
+- Retrocede para a faixa anterior (botão de retroceder)
+- Avança para a próxima faixa (botão de avançar)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Toque longo (pressionar e segurar):
+- Retrocede 10 segundos na faixa atual (botão de retroceder)
+- Avança 10 segundos na faixa atual (botão de avançar)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+▶️ Aplicativo em Segundo Plano (Miniplayer do Android)
+Botões exibidos na notificação/miniplayer:
+
+- Retroceder faixa
+- Retroceder 10 segundos
+- Play/Pause (mesmo botão)
+- Avançar 10 segundos
+- Avançar faixa
+
+Esses controles funcionam diretamente pela notificação do sistema Android ou pela tela de bloqueio, sem necessidade de reabrir o app.
